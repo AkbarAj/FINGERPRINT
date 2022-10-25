@@ -3,11 +3,11 @@
 
 // Structure example to receive data
 // Must match the sender structure
+int button = 5;
+const int a1= 18;
 typedef struct struct_message {
-    char a[32];
+    String a;
     int b;
-    float c;
-    bool d;
 } struct_message;
 
 // Create a struct_message called myData
@@ -22,17 +22,14 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   Serial.println(myData.a);
   Serial.print("Int: ");
   Serial.println(myData.b);
-  Serial.print("Float: ");
-  Serial.println(myData.c);
-  Serial.print("Bool: ");
-  Serial.println(myData.d);
-  Serial.println();
+
 }
  
 void setup() {
   // Initialize Serial Monitor
   Serial.begin(115200);
-  
+  pinMode(button,INPUT);
+  pinMode(18, OUTPUT);
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
 
@@ -48,5 +45,21 @@ void setup() {
 }
  
 void loop() {
-
+//  Serial.print(myData.b);
+//digitalWrite(a1, 0);
+//delay(1000);
+//digitalWrite(a1, 1);
+//delay(1000);
+int s= digitalRead(button);
+if(myData.b >=0 && myData.b<=127){
+  digitalWrite(a1, 0);
+  Serial.println("a1 = 0");
+  
+  }
+  if(s == 0){
+    digitalWrite(a1, 1);
+    Serial.println("a1 = 1");
+      myData.b = 128;
+    }
+  
 }
