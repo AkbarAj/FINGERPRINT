@@ -1,7 +1,13 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Adafruit_Fingerprint.h>
-uint8_t broadcastAddress[] = {0x78,0x21,0x84,0x7D,0x7E,0xA0};
+#include <HTTPClient.h>
+uint8_t broadcastAddress[] ={0x94,0xB9,0x7E,0xD9,0xCD,0x4C};
+//const char* ssid     = "mamank";
+//const char* password = "mamank69";
+//const char* serverName = "http://192.168.43.86/teslogin/api/finger";
+//const char* finger_masuk = "http://192.168.43.86/teslogin/api/finger_masuk";
+//const char* finger_keluar = "http://192.168.43.86/teslogin/api/finger_keluar";
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&Serial2);
 typedef struct struct_message {
   String a;
@@ -13,15 +19,18 @@ esp_now_peer_info_t peerInfo;
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  
 }
 void setup()  
 {
   pinMode(26,OUTPUT);
   digitalWrite(26,HIGH);
   Serial.begin(9600);
+  
   while (!Serial);  // For Yun/Leo/Micro/Zero/...
   delay(100);
   Serial.println("\n\nAdafruit finger detect test");
+  
   
   // set the data rate for the sensor serial port
   finger.begin(57600);
@@ -41,7 +50,10 @@ void setup()
     Serial.println("Error initializing ESP-NOW");
     return;
   }
-  esp_now_register_send_cb(OnDataSent);
+  status=1;
+  while(status){
+  esp_now_register_send_cb(OnDataSent);}
+  
   memcpy(peerInfo.peer_addr, broadcastAddress, 6);
   peerInfo.channel = 0;  
   peerInfo.encrypt = false;
@@ -53,6 +65,7 @@ void setup()
 
 void loop()                     // run over and over again
 {
+
   finger.fingerID = 0;
   getFingerprintID();
   Serial.println(finger.fingerID);
@@ -61,7 +74,7 @@ void loop()                     // run over and over again
     myData.a = "OKE";
     myData.b = finger.fingerID;
     finger.fingerID = 0;
-     esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
    
   if (result == ESP_OK) {
     Serial.println("Sent with success");
